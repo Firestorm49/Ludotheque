@@ -1,13 +1,13 @@
-package fr.eni.tp.ludothequeeni;
+package fr.eni.ludotheque;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LudothequeeniApplication {
+public class LudothequeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LudothequeeniApplication.class, args);
+		SpringApplication.run(LudothequeApplication.class, args);
 	}
 
 }
