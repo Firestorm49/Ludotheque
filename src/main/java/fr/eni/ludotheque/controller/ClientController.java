@@ -31,6 +31,9 @@ public class ClientController {
     @GetMapping("/client")
     public ResponseEntity<Client> getClient(@RequestParam(name = "no_client") int no_client) {
         Client client = clientService.findById(no_client);
+        if(client == null){
+            return new ResponseEntity<>(client, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
 

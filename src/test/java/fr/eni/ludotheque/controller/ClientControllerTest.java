@@ -4,12 +4,15 @@ import fr.eni.ludotheque.bll.ClientService;
 import fr.eni.ludotheque.classes.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,33 +32,47 @@ public class ClientControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         client = new Client();
-        client.setNo_client(1);
-        client.setNom("Dupont");
-        client.setPrenom("Jean");
+        client.setNo_client(5);
+        client.setNom("Lopez");
+        client.setPrenom("Ana");
+        client.setEmail("ana.lopez@test.fr");
+        client.setNo_telephone("0789012345");
     }
 
     @Test
     void testFindAll() {
-        List<Client> clients = Arrays.asList(client);
+        List<Client> clients = List.of(client);
         when(clientService.findAll()).thenReturn(clients);
 
         List<Client> result = clientController.findAll();
 
         assertEquals(1, result.size());
-        assertEquals("Dupont", result.get(0).getNom());
+        assertEquals("Lopez", result.get(0).getNom());
+        assertEquals("Ana", result.get(0).getPrenom());
         verify(clientService, times(1)).findAll();
     }
 
     @Test
-    void testGetClient() {
-        when(clientService.findById(1)).thenReturn(client);
+    void testGetClient_Found() {
+        when(clientService.findById(5)).thenReturn(client);
 
-        ResponseEntity<Client> response = clientController.getClient(1);
+        ResponseEntity<Client> response = clientController.getClient(5);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Jean", Objects.requireNonNull(response.getBody()).getPrenom());
-        verify(clientService, times(1)).findById(1);
+        assertEquals("ana.lopez@test.fr", response.getBody().getEmail());
+        verify(clientService, times(1)).findById(5);
+    }
+
+    @Test
+    void testGetClient_NotFound() {
+        when(clientService.findById(99)).thenReturn(null);
+
+        ResponseEntity<Client> response = clientController.getClient(99);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(clientService, times(1)).findById(99);
     }
 
     @Test
@@ -64,38 +81,38 @@ public class ClientControllerTest {
 
         ResponseEntity<Client> response = clientController.saveClient(client);
 
-        assertEquals(HttpStatus.CREATED.value(), response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals("Dupont", Objects.requireNonNull(response.getBody()).getNom());
-        verify(clientService, times(1)).saveClient(client);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Lopez", response.getBody().getNom());
+        verify(clientService).saveClient(client);
     }
 
     @Test
     void testUpdateClient() {
         Client updated = new Client();
-        updated.setNo_client(1);
-        updated.setNom("Durand");
-        updated.setPrenom("Luc");
+        updated.setNo_client(5);
+        updated.setNom("Garcia");
+        updated.setPrenom("Luis");
+        updated.setEmail("luis.garcia@test.fr");
+        updated.setNo_telephone("0912345678");
 
-        when(clientService.updateClient(1, updated)).thenReturn(updated);
+        when(clientService.updateClient(5, updated)).thenReturn(updated);
 
-        ResponseEntity<Client> response = clientController.updateClient(1, updated);
+        ResponseEntity<Client> response = clientController.updateClient(5, updated);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals("Durand", Objects.requireNonNull(response.getBody()).getNom());
-        verify(clientService, times(1)).updateClient(1, updated);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Garcia", response.getBody().getNom());
+        assertEquals("Luis", response.getBody().getPrenom());
+        verify(clientService).updateClient(5, updated);
     }
 
     @Test
     void testDeleteClient() {
-        when(clientService.deleteClient(1)).thenReturn(client);
+        when(clientService.deleteClient(5)).thenReturn(client);
 
-        ResponseEntity<Client> response = clientController.deleteClient(1);
+        ResponseEntity<Client> response = clientController.deleteClient(5);
 
-        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals("Dupont", Objects.requireNonNull(response.getBody()).getNom());
-        verify(clientService, times(1)).deleteClient(1);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Ana", response.getBody().getPrenom());
+        verify(clientService).deleteClient(5);
     }
 }

@@ -31,6 +31,9 @@ public class AdresseController {
     @GetMapping("/adresse")
     public ResponseEntity<Adresse> getAdresse(@RequestParam(name = "no_adresse") int no_adresse) {
         Adresse Adresse = adresseService.findById(no_adresse);
+        if(Adresse == null){
+            return new ResponseEntity<>(Adresse, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(Adresse, HttpStatus.OK);
     }
 

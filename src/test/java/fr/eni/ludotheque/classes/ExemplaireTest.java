@@ -10,11 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 public class ExemplaireTest {
-
     @Autowired
     private GenreRepository genreRepository;
 
@@ -28,32 +27,30 @@ public class ExemplaireTest {
     @Transactional
     void testCreateExemplaire() {
         Genre g1 = new Genre();
-        g1.setLibelle("Cartes");
-
-        genreRepository.saveAll(List.of(g1));
+        g1.setLibelle("Stratégie");
+        genreRepository.save(g1);
 
         Jeu jeu = new Jeu();
-        jeu.setTitre("UNO");
-        jeu.setReference("UNO123");
-        jeu.setAge_min(3);
-        jeu.setDescription("Jeu de cartes qui peut vous faire perdre des amis");
-        jeu.setDuree(15);
-        jeu.setTarif_jour(3.5);
+        jeu.setTitre("Catan");
+        jeu.setReference("CAT123");
+        jeu.setAge_min(10);
+        jeu.setDescription("Jeu de colonisation et de stratégie");
+        jeu.setDuree(90);
+        jeu.setTarif_jour(5.0);
         jeu.setGenres(List.of(g1));
 
         Jeu jeuBdd = jeuRepository.save(jeu);
 
         Exemplaire exemplaire = new Exemplaire();
         exemplaire.setJeu(jeuBdd);
-        exemplaire.setCode_barre("11151465468");
+        exemplaire.setCode_barre("1234567890123");
         exemplaire.setLouable(true);
 
         Exemplaire exemplaireBdd = exemplaireRepository.save(exemplaire);
 
         assertThat(exemplaireBdd).isNotNull();
-        assertThat(exemplaireBdd.getLouable()).isEqualTo(true);
-        assertThat(exemplaireBdd.getCode_barre()).isEqualTo("11151465468");
-        assertThat(exemplaireBdd.getJeu()).isEqualTo(jeuBdd);
-
+        assertThat(exemplaireBdd.getJeu().getTitre()).isEqualTo("Catan");
+        assertThat(exemplaireBdd.getCode_barre()).isEqualTo("1234567890123");
+        assertThat(exemplaireBdd.getLouable()).isTrue();
     }
 }
