@@ -3,9 +3,9 @@ package fr.eni.ludotheque.controller;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import fr.eni.ludotheque.bll.JeuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import fr.eni.ludotheque.bll.JeuService;
+import fr.eni.ludotheque.classes.Genre;
 import fr.eni.ludotheque.classes.Jeu;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +29,19 @@ public class JeuControllerTest {
     private JeuController jeuController;
 
     private Jeu jeu;
+    private Genre genre;
+    private List<Genre> genres;
 
     @BeforeEach
     void setUp() {
+        // Initialize genres list
+        genres = new ArrayList<>();
+        genre = new Genre();
+        genre.setNo_genre(1);
+        genre.setLibelle("Aventure");
+        genres.add(genre);
+
+        // Setup sample game with genres
         jeu = new Jeu();
         jeu.setNo_jeu(1);
         jeu.setTitre("Pandemic");
@@ -38,7 +50,7 @@ public class JeuControllerTest {
         jeu.setDescription("Jeu de coopération mondiale");
         jeu.setDuree(60);
         jeu.setTarif_jour(5.0);
-        jeu.setGenres(List.of());
+        jeu.setGenres(genres);
     }
 
     @Test
@@ -49,7 +61,13 @@ public class JeuControllerTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("Pandemic", result.get(0).getTitre());
+        Jeu returned = result.get(0);
+        assertEquals("Pandemic", returned.getTitre());
+        // Verify genres are correctly returned
+        assertNotNull(returned.getGenres());
+        assertEquals(1, returned.getGenres().size());
+        assertEquals("Aventure", returned.getGenres().get(0).getLibelle());
+
         verify(jeuService).findAll();
     }
 
@@ -61,7 +79,13 @@ public class JeuControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("PAN123", response.getBody().getReference());
+        Jeu returned = response.getBody();
+        assertEquals("PAN123", returned.getReference());
+        // Check genres in single get
+        assertNotNull(returned.getGenres());
+        assertEquals(1, returned.getGenres().size());
+        assertEquals("Aventure", returned.getGenres().get(0).getLibelle());
+
         verify(jeuService).findById(1);
     }
 
@@ -84,7 +108,13 @@ public class JeuControllerTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Pandemic", response.getBody().getTitre());
+        Jeu returned = response.getBody();
+        assertEquals("Pandemic", returned.getTitre());
+        // Verify genres saved
+        assertNotNull(returned.getGenres());
+        assertEquals(1, returned.getGenres().size());
+        assertEquals("Aventure", returned.getGenres().get(0).getLibelle());
+
         verify(jeuService).saveJeu(jeu);
     }
 
@@ -98,7 +128,7 @@ public class JeuControllerTest {
         updated.setDescription("Jeu de train et de stratégie");
         updated.setDuree(45);
         updated.setTarif_jour(4.5);
-        updated.setGenres(List.of());
+        updated.setGenres(genres);
 
         when(jeuService.updateJeu(1, updated)).thenReturn(updated);
 
@@ -106,7 +136,13 @@ public class JeuControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("TTR123", response.getBody().getReference());
+        Jeu returned = response.getBody();
+        assertEquals("TTR123", returned.getReference());
+        // Check genres still present after update
+        assertNotNull(returned.getGenres());
+        assertEquals(1, returned.getGenres().size());
+        assertEquals("Aventure", returned.getGenres().get(0).getLibelle());
+
         verify(jeuService).updateJeu(1, updated);
     }
 
@@ -118,7 +154,13 @@ public class JeuControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals("Pandemic", response.getBody().getTitre());
+        Jeu returned = response.getBody();
+        assertEquals("Pandemic", returned.getTitre());
+        // Confirm genres are returned on delete
+        assertNotNull(returned.getGenres());
+        assertEquals(1, returned.getGenres().size());
+        assertEquals("Aventure", returned.getGenres().get(0).getLibelle());
+
         verify(jeuService).deleteJeu(1);
     }
 }
