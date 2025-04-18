@@ -1,9 +1,14 @@
 package fr.eni.ludotheque.classes;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClientTest {
+
+    @Test
+    @Transactional
     void testGettersAndSetters() {
         Client client = new Client();
         client.setNo_client(321);

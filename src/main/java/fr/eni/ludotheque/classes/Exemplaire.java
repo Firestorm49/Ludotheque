@@ -15,9 +15,11 @@ public class Exemplaire {
     Integer no_exemplaire;
 
     @NonNull
+    @Column(name="code_barre")
     String code_barre;
 
     @NonNull
+    @Column(name="louable")
     Boolean louable;
 
     @ManyToOne

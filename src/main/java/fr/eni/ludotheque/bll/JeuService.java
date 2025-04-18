@@ -1,6 +1,12 @@
 package fr.eni.ludotheque.bll;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import fr.eni.ludotheque.classes.Exemplaire;
+import fr.eni.ludotheque.dal.ExemplaireRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import fr.eni.ludotheque.classes.Jeu;
@@ -11,6 +17,9 @@ public class JeuService {
 
     @Autowired
     private JeuRepository jeuRepository;
+
+    @Autowired
+    private ExemplaireRepository exemplaireRepository;
 
     public List<Jeu> findAll() {
         return jeuRepository.findAll();
@@ -37,6 +46,24 @@ public class JeuService {
         existing.setGenres(jeu.getGenres());
         jeuRepository.save(existing);
         return existing;
+    }
+    public List<Map<String, Object>> getJeuxWithAvailability() {
+        return jeuRepository.findAll().stream()
+                .map(jeu -> {
+                    Map<String, Object> info = new HashMap<>();
+                    info.put("jeu", jeu);
+                    info.put("availableCount", exemplaireRepository.countByJeuAndLouableTrue(jeu));
+                    return info;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<Jeu> getJeuxDisponiblesALocation() {
+        return exemplaireRepository.findByLouableTrue()
+                .stream()
+                .map(Exemplaire::getJeu)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public Jeu deleteJeu(int noJeu) {
