@@ -1,6 +1,8 @@
 package fr.eni.ludotheque.controller;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,6 +55,11 @@ public class JeuController {
         }
     }
 
+    @GetMapping("/availability")
+    public ResponseEntity<List<Map<String, Object>>> getAvailability() {
+        List<Map<String, Object>> list = jeuService.getJeuxWithAvailability();
+        return ResponseEntity.ok(list);
+    }
     @DeleteMapping("/jeu")
     public ResponseEntity<Jeu> deleteJeu(@RequestParam(name = "no_jeu") int noJeu) {
         try {

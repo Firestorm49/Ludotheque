@@ -1,9 +1,14 @@
 package fr.eni.ludotheque.classes;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdresseTest {
+
+    @Test
+    @Transactional
     void testGettersAndSetters() {
         Adresse adresse = new Adresse("Boulevard Victor", 44100, "Nantes");
         assertAll("Initial getters",

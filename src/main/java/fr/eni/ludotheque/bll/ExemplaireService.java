@@ -27,7 +27,12 @@ public class ExemplaireService {
 	public Exemplaire saveExemplaire(Exemplaire exemplaire) {
 		return exemplaireRepository.save(exemplaire);
 	}
-
+	public Exemplaire updateEtatExemplaire(int noExemplaire, boolean louable) {
+		Exemplaire ex = exemplaireRepository.findById(noExemplaire)
+				.orElseThrow(() -> new RuntimeException("Exemplaire non trouvé"));
+		ex.setLouable(louable);
+		return exemplaireRepository.save(ex);
+	}
 	public Exemplaire updateExemplaire(int noExemplaire, Exemplaire exemplaire) {
 		Exemplaire existing = exemplaireRepository.findById(noExemplaire)
 				.orElseThrow(() -> new RuntimeException("Exemplaire not found"));
