@@ -1,0 +1,23 @@
+# Appelle la CI commune. Aucune etape ici : tout vit dans lag-ci, et une
+# correction du pipeline s'y fait une fois pour tous les depots.
+name: CI commune
+
+# Declencheurs automatiques volontairement absents : la chaine est en
+# place mais ne consomme aucune minute. Pour l'activer sur ce depot,
+# retirer les diese des trois lignes ci-dessous.
+on:
+  # push:
+  #   branches: [main, master, develop, principale]
+  # pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-commune-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: Firestorm49/lag-ci/.github/workflows/ci-complete.yml@main
+    with:
+      projet: Ludotheque
+    secrets: inherit
