@@ -1,0 +1,17 @@
+# Appelle le CD commun. Se declenche sur une etiquette de version, jamais sur
+# une poussee : publier est une decision, pas une consequence.
+name: CD commun
+
+# Comme la CI : en place, pas encore branche. Retirer les diese des deux
+# lignes ci-dessous pour qu'une etiquette publie de nouveau.
+on:
+  # push:
+  #   tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  cd:
+    uses: Firestorm49/lag-ci/.github/workflows/cd-deploiement.yml@main
+    with:
+      projet: Ludotheque
+    secrets: inherit
