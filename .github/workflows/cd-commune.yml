@@ -9,6 +9,13 @@ on:
   #   tags: ["v*"]
   workflow_dispatch:
 
+# Creer une release demande d'ecrire dans le depot. Le reglage du
+# compte donne « read » par defaut, et un workflow appele ne peut pas
+# depasser les droits de son appelant : sans cette declaration, le CD
+# echoue avant tout travail.
+permissions:
+  contents: write
+
 jobs:
   cd:
     uses: Firestorm49/lag-ci/.github/workflows/cd-deploiement.yml@main
